@@ -1,0 +1,55 @@
+name: Terraform Deployment
+on:
+  push:
+    branches:
+    - dev
+jobs:
+  terraform-backend-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      S3_BUCKET: web-application-dr
+
+    steps:
+    - name: Clone Github repository
+      uses: actions/checkout@v4
+      with:
+        ref: dev
+    - name: List files
+      run: |
+        ls -la
+        pwd
+    - name: Installing Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.11.3"
+    - name: Setup AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: List files in Terraform backend dir
+      run: ls -la
+      working-directory: ./terraform-backend
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./terraform-backend
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: ./terraform-backend
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ./terraform-backend
+    - name: Terraform Apply
+      run: terraform apply --auto-approve
+      working-directory: ./terraform-backend
+    - name: Look at app.py file
+      run: cat app.py
+      working-directory: ./backend-application
+    - name: List S3 Bucket
+      run: |
+        aws S3 ls
+    - name: Copy app.py to S3 Bucket
+      run: aws s3 cp app.py s3://$S3_BUCKET/backend/
+      working-directory: ./backend-application
