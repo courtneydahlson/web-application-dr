@@ -77,6 +77,7 @@ resource "aws_launch_template" "backend" {
   name_prefix   = "backend-lt-"
   image_id      = var.ami_id
   instance_type = var.instance_type
+  key_name      = "EC2 Tutorial"
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2_instance_profile_backend.name
