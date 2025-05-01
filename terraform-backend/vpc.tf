@@ -19,12 +19,25 @@ resource "aws_subnet" "private_subnet_2" {
     cidr_block = "10.0.2.0/24"
     availability_zone = "${var.region}b"
     tags = { Name = "private-subnet-2" }
+
+}
+
+# Public Subnets
+resource "aws_subnet" "public_subnet_1" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = "10.0.3.0/24"
+    availability_zone = "${var.region}a"
+    map_public_ip_on_launch = true 
+    tags = { Name = "public-subnet-1" }
+
 }
 
 # Internet Gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 }
+
+
 
 # Creates a route table for the private subnets.
 resource "aws_route_table" "private_rt" {
@@ -39,4 +52,24 @@ resource "aws_route_table_association" "a" {
 resource "aws_route_table_association" "b" {
   subnet_id      = aws_subnet.private_subnet_2.id
   route_table_id = aws_route_table.private_rt.id
+}
+
+
+# Route Table for Public Subnet
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
+  tags   = { Name = "public-rt" }
+}
+
+# Route: Allow outbound to internet via IGW
+resource "aws_route" "public_route" {
+  route_table_id         = aws_route_table.public_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+# Associates the public subnet with the route table.
+resource "aws_route_table_association" "a-public" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_rt.id
 }

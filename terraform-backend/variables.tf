@@ -42,3 +42,8 @@ variable "s3_bucket_backend" {
     description = "S3 bucket name"
     type = string
 }
+
+variable "key_name" {
+  description = "The name of the EC2 Key Pair"
+  type        = string
+}
