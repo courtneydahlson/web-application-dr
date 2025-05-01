@@ -36,7 +36,7 @@ resource "aws_lb" "backend_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_backend_sg.id]
   #subnets            = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  subnets            = [aws_subnet.public_subnet_1.id]
+  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
 }
 
 # Target Group
