@@ -47,9 +47,6 @@ jobs:
     - name: Look at app.py file
       run: cat app.py
       working-directory: ./backend-application
-    # - name: List S3 Bucket
-    #   run: |
-    #     aws S3 ls
     - name: Copy app.py to S3 Bucket
       run: aws s3 cp app.py s3://$S3_BUCKET/backend/
       working-directory: ./backend-application
