@@ -11,6 +11,13 @@ resource "aws_security_group" "instance_backend_sg" {
     cidr_blocks = [var.vpc_cidr_block] 
   }
 
+    ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     description = "Allow HTTP traffic from ALB"
     from_port   = 80
