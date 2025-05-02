@@ -30,7 +30,7 @@ resource "aws_db_instance" "backend_db_rds" {
   engine_version     = "8.0"
   instance_class     = "db.t3.micro"
   allocated_storage  = 20
-  db_name            = "webapp-rds-mysqldb-tf"
+  db_name            = "webappdb"
   username           = local.db_creds.username
   password           = local.db_creds.password
   skip_final_snapshot = true
