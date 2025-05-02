@@ -29,10 +29,10 @@ resource "aws_security_group" "alb_backend_sg" {
     }
 }
 
-# Internal ALB
+# Internet Facing ALB
 resource "aws_lb" "backend_alb" {
   name               = "backend-alb-tf"
-  internal           = true
+  internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_backend_sg.id]
   #subnets            = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
