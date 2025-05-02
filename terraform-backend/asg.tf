@@ -88,14 +88,5 @@ resource "aws_launch_template" "backend" {
     associate_public_ip_address = false
   }
 
-  user_data = base64encode(<<-EOF
-    !/bin/bash
-    yum update -y
-    yum install python3-pip -y
-    pip3 install flask
-    cd /home/ec2-user
-    aws s3 cp s3://web-application-dr/backend/app.py .
-    python3 app.py
-    EOF
-  )
+  user_data = base64encode(file("user_data.sh"))
 }
