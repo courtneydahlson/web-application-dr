@@ -72,6 +72,8 @@ resource "aws_iam_instance_profile" "ec2_instance_profile_backend" {
 }
 
 
+data "aws_caller_identity" "current" {}
+
 # RDS Policy
 resource "aws_iam_policy" "secrets_and_rds_policy" {
   name = "SecretsAndRDSAccessPolicy"
