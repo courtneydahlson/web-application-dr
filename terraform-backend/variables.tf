@@ -47,3 +47,8 @@ variable "key_name" {
   description = "The name of the EC2 Key Pair"
   type        = string
 }
+
+variable "db_user" {
+  description = "The database username"
+  type        = string
+}

@@ -20,9 +20,9 @@ resource "aws_autoscaling_group" "backend_asg" {
   }
 }
 
-# IAM role for ec2 to access S3
-resource "aws_iam_role" "ec2_s3_access" {
-  name = "ec2-s3-access-role-tf"
+# IAM role for ec2 
+resource "aws_iam_role" "ec2_iam_role" {
+  name = "ec2-role-tf"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -60,7 +60,7 @@ resource "aws_iam_policy" "s3_access_policy" {
 
 # Attach policy to role
 resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
-  role       = aws_iam_role.ec2_s3_access.name
+  role       = aws_iam_role.ec2_iam_role.name
   policy_arn = aws_iam_policy.s3_access_policy.arn
 }
 
@@ -68,7 +68,42 @@ resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
 #Instance profile to attach IAM role to EC2 instance
 resource "aws_iam_instance_profile" "ec2_instance_profile_backend" {
   name = "ec2-s3-instance-profile-backend-tf"
-  role = aws_iam_role.ec2_s3_access.name
+  role = aws_iam_role.ec2_iam_role.name
+}
+
+
+# RDS Policy
+resource "aws_iam_policy" "secrets_and_rds_policy" {
+  name = "SecretsAndRDSAccessPolicy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      # Allow reading secret values
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ],
+        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:*"
+      },
+      # Allow RDS IAM DB authentication
+    #   {
+    #     Effect = "Allow",
+    #     Action = [
+    #       "rds-db:connect"
+    #     ],
+    #     Resource = "arn:aws:rds-db:${var.region}:${data.aws_caller_identity.current.account_id}:dbuser:${aws_rds_cluster.aurora_cluster.cluster_resource_id}/${var.db_user}"
+    #   }
+    ]
+  })
+}
+
+# Attach the RDS Policy to the Role
+resource "aws_iam_role_policy_attachment" "attach_policy" {
+  role       = aws_iam_role.ec2_iam_role.name
+  policy_arn = aws_iam_policy.secrets_and_rds_policy.arn
 }
 
 

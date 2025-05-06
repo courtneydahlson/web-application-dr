@@ -7,3 +7,4 @@ asg_max_size         = 3
 asg_desired_capacity = 2
 s3_bucket_backend = "web-application-dr"
 key_name = "EC2 Tutorial"
+#db_user = ""
