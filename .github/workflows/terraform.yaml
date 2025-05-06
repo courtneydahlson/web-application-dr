@@ -50,6 +50,6 @@ jobs:
     - name: Copy app.py to S3 Bucket
       run: aws s3 cp app.py s3://$S3_BUCKET/backend/
       working-directory: ./backend-application
-    # - name: Terraform destroy
-    #   run: terraform destroy --auto-approve
-    #   working-directory: ./terraform-backend
+    - name: Terraform destroy
+      run: terraform destroy --auto-approve
+      working-directory: ./terraform-backend
