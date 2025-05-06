@@ -48,7 +48,7 @@ variable "key_name" {
   type        = string
 }
 
-variable "db_user" {
-  description = "The database username"
-  type        = string
-}
+# variable "db_user" {
+#   description = "The database username"
+#   type        = string
+# }
