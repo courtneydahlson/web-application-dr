@@ -3,7 +3,36 @@ on:
   push:
     branches:
     - dev
+
 jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone Github repository
+      uses: actions/checkout@v4
+      with:
+        ref: dev
+    - name: List files
+      run: |
+        ls -la
+        pwd
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        cache: 'pip'
+    - name: Install build dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
+      working-directory: ./backend-application
+    - name: Look at app.py file
+      run: cat app.py
+      working-directory: ./backend-application
+    - name: Run test with pytest
+      run: pytest test_app.py -v
+      working-directory: ./backend-application
+
   terraform-backend-deploy:
     runs-on: ubuntu-latest
 
@@ -44,12 +73,46 @@ jobs:
     - name: Terraform Apply
       run: terraform apply --auto-approve
       working-directory: ./terraform-backend
-    - name: Look at app.py file
-      run: cat app.py
-      working-directory: ./backend-application
-    - name: Copy app.py to S3 Bucket
-      run: aws s3 cp app.py s3://$S3_BUCKET/backend/
-      working-directory: ./backend-application
-    - name: Terraform destroy
-      run: terraform destroy --auto-approve
+    # - name: Terraform destroy
+    #   run: terraform destroy --auto-approve
+    #   working-directory: ./terraform-backend
+    - name: Get Terraform output
+      id: tf_output
+      run: |
+        echo "writer_endpoint=$(terraform output -raw writer_endpoint)" >> "$GITHUB_OUTPUT"
       working-directory: ./terraform-backend
+    - name: Install MySQL Client
+      run: sudo apt-get install mysql-client -y
+    - name: Create table
+      env:
+        MYSQL_HOST: ${{ steps.tf_output.outputs.writer_endpoint }}
+        MYSQL_USER: ${{ secrets.MYSQL_USER }}
+        MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        MYSQL_PORT: 3306
+        MYSQL_DB: webappdb
+        MYSQL_TABLE: orders
+      run: |
+        mysql -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER -p $MYSQL_PASSWORD <<EOF
+        USE \`$MYSQL_DB\`;
+        CREATE TABLE IF NOT EXISTS \`$MYSQL_TABLE\` (
+        	id INT AUTO_INCREMENT PRIMARY KEY,
+          customer_id VARCHAR(50) NOT NULL,
+          product_id VARCHAR(50) NOT NULL,
+          quantity INT NOT NULL,
+          order_date VARCHAR(50),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        EOF
+    - name: Look at config.py file
+      run: cat config.py
+      working-directory: ./backend-application
+    - name: Replace writer endpoint in config.py
+      run: sed -i "s|\"localhost\"|\"${{ steps.tf_output.outputs.writer_endpoint }}\"|" config.py
+      working-directory: ./backend-application
+    - name: Look at config.py file
+      run: cat config.py
+      working-directory: ./backend-application
+
+    - name: Copy backend application files to S3 Bucket
+      run: aws s3 cp . s3://$S3_BUCKET/backend/ --recursive
+      working-directory: ./backend-application

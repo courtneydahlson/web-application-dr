@@ -12,12 +12,6 @@ resource "aws_autoscaling_group" "backend_asg" {
   }
 
   target_group_arns = [aws_lb_target_group.backend_tg.arn]
-
-  tag {
-    key                 = "Name"
-    value               = "Backend"
-    propagate_at_launch = true
-  }
 }
 
 # IAM role for ec2 
@@ -75,7 +69,7 @@ resource "aws_iam_instance_profile" "ec2_instance_profile_backend" {
 data "aws_caller_identity" "current" {}
 
 # RDS Policy
-resource "aws_iam_policy" "secrets_and_rds_policy" {
+resource "aws_iam_policy" "secrets" {
   name = "SecretsAndRDSAccessPolicy"
 
   policy = jsonencode({
@@ -89,15 +83,7 @@ resource "aws_iam_policy" "secrets_and_rds_policy" {
           "secretsmanager:DescribeSecret"
         ],
         Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:*"
-      },
-      # Allow RDS IAM DB authentication
-    #   {
-    #     Effect = "Allow",
-    #     Action = [
-    #       "rds-db:connect"
-    #     ],
-    #     Resource = "arn:aws:rds-db:${var.region}:${data.aws_caller_identity.current.account_id}:dbuser:${aws_rds_cluster.aurora_cluster.cluster_resource_id}/${var.db_user}"
-    #   }
+      }
     ]
   })
 }
@@ -115,6 +101,15 @@ resource "aws_launch_template" "backend" {
   image_id      = var.ami_id
   instance_type = var.instance_type
   key_name      = "EC2 Tutorial"
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "Web App Backend"
+      Environment = "Development"
+    }
+  }
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2_instance_profile_backend.name

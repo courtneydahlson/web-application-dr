@@ -23,27 +23,6 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
-# Create RDS
-# resource "aws_db_instance" "backend_db_rds" {
-#   identifier         = "backend-db-rds-tf"
-#   engine             = "mysql"
-#   engine_version     = "8.0"
-#   instance_class     = "db.t3.micro"
-#   allocated_storage  = 20
-#   db_name            = "webappdb"
-#   username           = local.db_creds.username
-#   password           = local.db_creds.password
-#   skip_final_snapshot = true
-#   vpc_security_group_ids = [aws_security_group.rds_sg.id]
-#   db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
-#   multi_az               = true
-#   apply_immediately      = true
-
-#   tags = {
-#     Name = "BackendRDS"
-#   }
-# }
-
 # Retrieve Credentials from secrets manager
 data "aws_secretsmanager_secret" "rds_creds" {
   name = "rds/mysql"
@@ -58,6 +37,7 @@ locals {
 }
 
 
+# Create Aurora Cluster (writer endpoint)
 resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier      = "backend-aurora-cluster"
   engine                  = "aurora-mysql"
@@ -71,10 +51,25 @@ resource "aws_rds_cluster" "aurora_cluster" {
   backup_retention_period = 1
 }
 
-resource "aws_rds_cluster_instance" "aurora_instance" {
-  identifier              = "backend-aurora-instance-1"
+# Create writer instance
+resource "aws_rds_cluster_instance" "writer" {
+  identifier              = "aurora-writer-instance"
   cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  instance_class          = "db.t3.medium"
+  instance_class          = "db.t4g.small"
   engine                  = "aurora-mysql"
   publicly_accessible     = false
+}
+
+# Create reader instance
+resource "aws_rds_cluster_instance" "reader" {
+  identifier              = "aurora-reader-instance"
+  cluster_identifier      = aws_rds_cluster.aurora_cluster.id
+  instance_class          = "db.t4g.small"  
+  engine                  = "aurora-mysql"  
+  publicly_accessible     = false
+  db_subnet_group_name    = aws_db_subnet_group.rds_subnets.name
+  promotion_tier          = 5
+  tags = {
+    Name = "AuroraReader"
+  }
 }
