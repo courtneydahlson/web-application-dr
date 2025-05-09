@@ -69,8 +69,8 @@ resource "aws_iam_instance_profile" "ec2_instance_profile_backend" {
 data "aws_caller_identity" "current" {}
 
 # RDS Policy
-resource "aws_iam_policy" "secrets" {
-  name = "SecretsAndRDSAccessPolicy"
+resource "aws_iam_policy" "secrets_policy" {
+  name = "SecretsAccessPolicy"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -91,7 +91,7 @@ resource "aws_iam_policy" "secrets" {
 # Attach the RDS Policy to the Role
 resource "aws_iam_role_policy_attachment" "attach_policy" {
   role       = aws_iam_role.ec2_iam_role.name
-  policy_arn = aws_iam_policy.secrets_and_rds_policy.arn
+  policy_arn = aws_iam_policy.secrets_policy.arn
 }
 
 

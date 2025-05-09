@@ -34,6 +34,7 @@ jobs:
       working-directory: ./backend-application
 
   terraform-backend-deploy:
+    needs: build-test
     runs-on: ubuntu-latest
 
     env:
