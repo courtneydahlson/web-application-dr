@@ -10,7 +10,8 @@ resource "aws_autoscaling_group" "backend_asg" {
     id      = aws_launch_template.backend.id
     version = "$Latest"
   }
-
+  depends_on = [aws_nat_gateway.nat]
+   
   target_group_arns = [aws_lb_target_group.backend_tg.arn]
 }
 
