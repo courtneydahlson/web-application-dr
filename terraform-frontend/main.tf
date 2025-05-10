@@ -47,7 +47,7 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Public HTTP
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -67,7 +67,7 @@ resource "aws_security_group" "alb_sg" {
 
 #Target Group
 resource "aws_lb_target_group" "frontend_tg" {
-  name     = "frontend_tg"
+  name     = "frontend-tg"
   port     = 80
   protocol = "HTTP"
   vpc_id   = data.aws_vpc.main.id
