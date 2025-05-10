@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 yum install python3-pip -y
 dnf install mariadb105 -y
 cd /home/ec2-user
