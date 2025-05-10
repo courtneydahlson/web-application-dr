@@ -1,0 +1,99 @@
+name: Terraform Deployment
+on:
+  push:
+    branches:
+    - dev
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone Github repository
+      uses: actions/checkout@v4
+      with:
+        ref: dev
+    - name: List files
+      run: |
+        ls -la
+        pwd
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        cache: 'pip'
+    - name: Install build dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
+      working-directory: ./backend-application
+    - name: Look at app.py file
+      run: cat app.py
+      working-directory: ./backend-application
+    - name: Run test with pytest
+      run: pytest test_app.py test_create_table.py -v
+      working-directory: ./backend-application
+
+  terraform-backend-deploy:
+    needs: build-test
+    runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.tf_output.outputs.writer_endpoint }}
+
+    env:
+      S3_BUCKET: web-application-dr
+
+    steps:
+    - name: Clone Github repository
+      uses: actions/checkout@v4
+      with:
+        ref: dev
+    - name: List files
+      run: |
+        ls -la
+        pwd
+    - name: Installing Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.11.3"
+    - name: Setup AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID}}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: List files in Terraform backend dir
+      run: ls -la
+      working-directory: ./terraform-backend
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./terraform-backend
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: ./terraform-backend
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ./terraform-backend
+    - name: Terraform Apply
+      run: terraform apply --auto-approve
+      working-directory: ./terraform-backend
+    # - name: Terraform destroy
+    #   run: terraform destroy --auto-approve
+    #   working-directory: ./terraform-backend
+    - name: Get Terraform output
+      id: tf_output
+      run: |
+        echo "writer_endpoint=$(terraform output -raw writer_endpoint)" >> "$GITHUB_OUTPUT"
+      working-directory: ./terraform-backend
+    - name: Look at config.py file
+      run: cat config.py
+      working-directory: ./backend-application
+    - name: Replace writer endpoint in config.py
+      run: sed -i "s|\"localhost\"|\"${{ steps.tf_output.outputs.writer_endpoint }}\"|" config.py
+      working-directory: ./backend-application
+    - name: Look at config.py file
+      run: cat config.py
+      working-directory: ./backend-application
+
+    - name: Copy backend application files to S3 Bucket
+      run: aws s3 cp . s3://$S3_BUCKET/backend/ --recursive
+      working-directory: ./backend-application
