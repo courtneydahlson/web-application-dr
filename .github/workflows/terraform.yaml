@@ -36,6 +36,8 @@ jobs:
   terraform-backend-deploy:
     needs: build-test
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.tf_output.outputs.writer_endpoint }}
 
     env:
       S3_BUCKET: web-application-dr
