@@ -73,12 +73,12 @@ jobs:
     - name: Terraform Plan
       run: terraform plan
       working-directory: ./terraform-backend
-    # - name: Terraform Apply
-    #   run: terraform apply --auto-approve
-    #   working-directory: ./terraform-backend
-    - name: Terraform destroy
-      run: terraform destroy --auto-approve
+    - name: Terraform Apply
+      run: terraform apply --auto-approve
       working-directory: ./terraform-backend
+    # - name: Terraform destroy
+    #   run: terraform destroy --auto-approve
+    #   working-directory: ./terraform-backend
     - name: Get Terraform mysql writer endpoint output
       id: tf_output
       run: |
@@ -161,9 +161,9 @@ jobs:
     - name: Terraform Plan
       run: terraform plan
       working-directory: ./terraform-frontend
-    # - name: Terraform Apply
-    #   run: terraform apply --auto-approve
-    #   working-directory: ./terraform-frontend
-    - name: Terraform Destroy
-      run: terraform destroy --auto-approve
+    - name: Terraform Apply
+      run: terraform apply --auto-approve
       working-directory: ./terraform-frontend
+    # - name: Terraform Destroy
+    #   run: terraform destroy --auto-approve
+    #   working-directory: ./terraform-frontend

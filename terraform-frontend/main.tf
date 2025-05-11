@@ -89,7 +89,7 @@ resource "aws_lb" "frontend_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [data.aws_subnet.private_subnet_1.id, data.aws_subnet.private_subnet_2.id]
+  subnets            = [data.aws_subnet.public_subnet_1.id, data.aws_subnet.public_subnet_2.id]
 }
 
 # Listener that listens for connections on port 80 and forwards the request to a target group
@@ -118,7 +118,7 @@ resource "aws_launch_template" "web_server_lt" {
   }
 
   network_interfaces {
-    associate_public_ip_address = true
+    associate_public_ip_address = false
     security_groups             = [aws_security_group.instance_frontend_sg.id]
   }
 
