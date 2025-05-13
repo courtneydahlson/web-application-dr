@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def get_secret(secret_name, region_name):
     client = boto3.client('secretsmanager', region_name=region_name)
