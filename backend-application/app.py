@@ -42,7 +42,7 @@ def home():
     return "Welcome to the order submission backend"
 
 @app.route('/ordersubmission', methods=['POST', 'OPTIONS'])
-@cross_origin(origin='*', methods=['POST', 'OPTIONS'], allow_headers=['Content-Type'])
+#@cross_origin(origin='*', methods=['POST', 'OPTIONS'], allow_headers=['Content-Type'])
 def handle_order():
     if request.method == "OPTIONS":
         response = app.make_response("")
