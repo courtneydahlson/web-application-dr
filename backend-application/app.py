@@ -41,8 +41,10 @@ def get_db_connection():
 def home():
     return "Welcome to the order submission backend"
 
-@app.route('/ordersubmission', methods=['POST'])
+@app.route('/ordersubmission', methods=['POST', 'OPTIONS'])
 def handle_order():
+    if request.method == "OPTIONS":
+        return "", 200
     data = request.get_json(silent=True)
 
     if data:
