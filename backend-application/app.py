@@ -4,8 +4,11 @@ import config
 import boto3
 import json
 from botocore.exceptions import ClientError
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
 
 def get_secret(secret_name, region_name):
     client = boto3.client('secretsmanager', region_name=region_name)
