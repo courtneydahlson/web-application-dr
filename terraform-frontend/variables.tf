@@ -36,3 +36,7 @@ variable "s3_bucket_frontend" {
     description = "S3 bucket name"
     type = string
 }
+
+variable "certificate_arn" {
+  default = "arn:aws:acm:us-east-1:783764614133:certificate/8f6d651e-df0f-4419-bc01-3aff5ebb2b9d"
+}
