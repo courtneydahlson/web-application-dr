@@ -48,6 +48,9 @@ resource "aws_rds_cluster" "aurora_cluster" {
   vpc_security_group_ids  = [aws_security_group.rds_sg.id]
   skip_final_snapshot     = true
   backup_retention_period = 1
+  lifecycle {
+    ignore_changes = [ global_cluster_identifier ]
+  }
 }
 
 
