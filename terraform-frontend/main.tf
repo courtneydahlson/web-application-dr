@@ -92,18 +92,6 @@ resource "aws_lb" "frontend_alb" {
   subnets            = [data.aws_subnet.public_subnet_1.id, data.aws_subnet.public_subnet_2.id]
 }
 
-# Listener that listens for connections on port 80 and forwards the request to a target group
-# resource "aws_lb_listener" "order_listener" {
-#   load_balancer_arn = aws_lb.frontend_alb.arn
-#   port              = 80
-#   protocol          = "HTTP"
-
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.frontend_tg.arn
-#   }
-# }
-
 resource "aws_lb_listener" "https_listener" {
   load_balancer_arn = aws_lb.frontend_alb.arn
   port              = 443

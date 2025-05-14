@@ -36,12 +36,18 @@ locals {
   db_creds = jsondecode(data.aws_secretsmanager_secret_version.rds_creds.secret_string)
 }
 
+resource "aws_rds_global_cluster" "aurora_global_cluster" {
+  global_cluster_identifier = "aurora-global-cluster"
+  engine = "aurora-mysql"
+  engine_version = "8.0.mysql_aurora.3.08.2"
+}
 
 # Create Aurora Cluster (writer endpoint)
 resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier      = "backend-aurora-cluster"
   engine                  = "aurora-mysql"
   engine_version          = "8.0.mysql_aurora.3.08.2" 
+  global_cluster_identifier = aws_rds_global_cluster.aurora_global_cluster.global_cluster_identifier
   database_name           = "webappdb"
   master_username         = local.db_creds.username
   master_password         = local.db_creds.password
