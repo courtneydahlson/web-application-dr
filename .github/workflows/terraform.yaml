@@ -294,16 +294,16 @@ jobs:
       working-directory: ./frontend
     - name: Terraform Init
       run: terraform init
-      working-directory: ./terraform-frontend
+      working-directory: ./terraform-frontend-secondary
     - name: Terraform Validate
       run: terraform validate
-      working-directory: ./terraform-frontend
+      working-directory: ./terraform-frontend-secondary
     - name: Terraform Plan
       run: terraform plan
-      working-directory: ./terraform-frontend
+      working-directory: ./terraform-frontend-secondary
     - name: Terraform Apply
       run: terraform apply --auto-approve
-      working-directory: ./terraform-frontend
+      working-directory: ./terraform-frontend-secondary
     # - name: Terraform Destroy
     #   run: terraform destroy --auto-approve
-    #   working-directory: ./terraform-frontend
+    #   working-directory: ./terraform-frontend-secondary
