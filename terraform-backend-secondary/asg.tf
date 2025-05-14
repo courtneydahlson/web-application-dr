@@ -17,7 +17,7 @@ resource "aws_autoscaling_group" "backend_asg" {
 
 # IAM role for ec2 
 resource "aws_iam_role" "ec2_iam_role" {
-  name = "ec2-role-tf"
+  name = "ec2-role-secondary-tf"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -33,7 +33,7 @@ resource "aws_iam_role" "ec2_iam_role" {
 
 # S3 Policy
 resource "aws_iam_policy" "s3_access_policy" {
-  name = "ec2-s3-access-policy-tf"
+  name = "ec2-s3-access-policy-secondary-tf"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -71,7 +71,7 @@ data "aws_caller_identity" "current" {}
 
 # RDS Policy
 resource "aws_iam_policy" "secrets_policy" {
-  name = "SecretsAccessPolicy"
+  name = "SecretsAccessPolicy-secondary-tf"
 
   policy = jsonencode({
     Version = "2012-10-17",

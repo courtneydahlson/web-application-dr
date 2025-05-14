@@ -40,13 +40,10 @@ locals {
 
 # Create Aurora Cluster (writer endpoint)
 resource "aws_rds_cluster" "aurora_cluster" {
-  cluster_identifier      = "backend-aurora-cluster"
+  cluster_identifier      = "backend-aurora-cluster-secondary"
   engine                  = "aurora-mysql"
   engine_version          = "8.0.mysql_aurora.3.08.2" 
   global_cluster_identifier = var.global_cluster_identifier
-  database_name           = "webappdb"
-  master_username         = local.db_creds.username
-  master_password         = local.db_creds.password
   db_subnet_group_name    = aws_db_subnet_group.rds_subnets.name
   vpc_security_group_ids  = [aws_security_group.rds_sg.id]
   skip_final_snapshot     = true
@@ -56,7 +53,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
 
 # Create reader instance
 resource "aws_rds_cluster_instance" "reader" {
-  identifier              = "aurora-reader-instance"
+  identifier              = "aurora-reader-instance-secondary"
   cluster_identifier      = aws_rds_cluster.aurora_cluster.id
   instance_class          = "db.r5.large"  
   engine                  = "aurora-mysql"  

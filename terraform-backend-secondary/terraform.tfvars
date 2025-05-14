@@ -1,6 +1,6 @@
 region = "us-west-2"
 vpc_cidr_block = "10.0.0.0/16"
-ami_id        = "ami-0f88e80871fd81e91"
+ami_id        = "ami-04999cd8f2624f834"
 instance_type = "t2.micro"
 asg_min_size         = 1
 asg_max_size         = 1
