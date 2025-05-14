@@ -25,7 +25,7 @@ resource "aws_security_group" "rds_sg" {
 
 # Retrieve Credentials from secrets manager
 data "aws_secretsmanager_secret" "rds_creds" {
-  name = "rds/mysql"
+  name = "rds/mysql/secondary"
 }
 
 data "aws_secretsmanager_secret_version" "rds_creds" {
@@ -36,19 +36,12 @@ locals {
   db_creds = jsondecode(data.aws_secretsmanager_secret_version.rds_creds.secret_string)
 }
 
-# Create global cluster 
-resource "aws_rds_global_cluster" "aurora_global_cluster" {
-  global_cluster_identifier = "aurora-global-cluster"
-  engine = "aurora-mysql"
-  engine_version = "8.0.mysql_aurora.3.08.2"
-}
-
 # Create Aurora Cluster (writer endpoint)
 resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier      = "backend-aurora-cluster"
   engine                  = "aurora-mysql"
   engine_version          = "8.0.mysql_aurora.3.08.2" 
-  global_cluster_identifier = aws_rds_global_cluster.aurora_global_cluster.global_cluster_identifier
+  global_cluster_identifier = var.global_cluster_identifier
   database_name           = "webappdb"
   master_username         = local.db_creds.username
   master_password         = local.db_creds.password
@@ -58,14 +51,6 @@ resource "aws_rds_cluster" "aurora_cluster" {
   backup_retention_period = 1
 }
 
-# Create writer instance
-resource "aws_rds_cluster_instance" "writer" {
-  identifier              = "aurora-writer-instance"
-  cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  instance_class          = "db.t4g.medium"
-  engine                  = "aurora-mysql"
-  publicly_accessible     = false
-}
 
 # Create reader instance
 resource "aws_rds_cluster_instance" "reader" {

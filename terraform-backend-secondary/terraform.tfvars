@@ -1,0 +1,9 @@
+region = "us-west-2"
+vpc_cidr_block = "10.0.0.0/16"
+ami_id        = "ami-0f88e80871fd81e91"
+instance_type = "t2.micro"
+asg_min_size         = 1
+asg_max_size         = 1
+asg_desired_capacity = 1
+s3_bucket_backend = "web-application-dr-secondary"
+global_cluster_identifier = "aurora-global-cluster"
