@@ -64,6 +64,9 @@ jobs:
     - name: List files in Terraform backend dir
       run: ls -la
       working-directory: ./terraform-backend
+    - name: Copy backend application files to S3 Bucket
+      run: aws s3 cp . s3://$S3_BUCKET/backend/ --recursive
+      working-directory: ./backend-application
     - name: Terraform Init
       run: terraform init
       working-directory: ./terraform-backend
@@ -93,9 +96,8 @@ jobs:
     - name: Look at config.py file
       run: cat config.py
       working-directory: ./backend-application
-
-    - name: Copy backend application files to S3 Bucket
-      run: aws s3 cp . s3://$S3_BUCKET/backend/ --recursive
+    - name: Copy backend config.py file to S3 Bucket
+      run: aws s3 cp config.py s3://$S3_BUCKET/backend/
       working-directory: ./backend-application
 
     - name: Get Terraform backend ALB output
