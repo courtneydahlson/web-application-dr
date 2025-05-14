@@ -1,3 +1,3 @@
 const CONFIG = {
-    BACKEND_LB_DNS: "dummy url"
+    BACKEND_LB_DNS: "https://api.courtneydahlson.com/ordersubmission"
 };

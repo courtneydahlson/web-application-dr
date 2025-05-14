@@ -62,7 +62,7 @@ resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
 
 #Instance profile to attach IAM role to EC2 instance
 resource "aws_iam_instance_profile" "ec2_instance_profile_backend" {
-  name = "ec2-s3-instance-profile-backend-tf"
+  name = "ec2-s3-instance-profile-backend-secondary-tf"
   role = aws_iam_role.ec2_iam_role.name
 }
 

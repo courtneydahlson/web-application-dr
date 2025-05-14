@@ -1,6 +1,6 @@
 #EC2 Instance in Public Subnet
 resource "aws_instance" "web" {
-  ami                    = "ami-0953476d60561c955"
+  ami                    = var.ami.id
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.public_subnet_1.id
   vpc_security_group_ids = [aws_security_group.instance_backend_sg.id]
