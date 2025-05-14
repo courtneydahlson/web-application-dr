@@ -101,7 +101,7 @@ resource "aws_launch_template" "backend" {
   name_prefix   = "backend-lt-"
   image_id      = var.ami_id
   instance_type = var.instance_type
-  key_name      = "EC2 Tutorial"
+  key_name      = "EC2 Tutorial US west 2"
 
   tag_specifications {
     resource_type = "instance"

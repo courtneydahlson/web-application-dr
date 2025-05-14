@@ -62,7 +62,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
 resource "aws_rds_cluster_instance" "writer" {
   identifier              = "aurora-writer-instance"
   cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  instance_class          = "db.t4g.medium"
+  instance_class          = "db.r5.large"
   engine                  = "aurora-mysql"
   publicly_accessible     = false
 }
@@ -71,7 +71,7 @@ resource "aws_rds_cluster_instance" "writer" {
 resource "aws_rds_cluster_instance" "reader" {
   identifier              = "aurora-reader-instance"
   cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  instance_class          = "db.t4g.medium"  
+  instance_class          = "db.r5.large"  
   engine                  = "aurora-mysql"  
   publicly_accessible     = false
   db_subnet_group_name    = aws_db_subnet_group.rds_subnets.name
