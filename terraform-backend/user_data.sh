@@ -11,7 +11,7 @@ while true; do
     MYSQL_HOST=$(grep MYSQL_HOST config.py | cut -d'"' -f2)
     echo "Checking Aurora MySQL connectivity to $MYSQL_HOST:3306"
     nc -z -w10 "$MYSQL_HOST" 3306
-    if [ $? -eq 0]; then
+    if [ $? -eq 0 ]; then
         echo "Aurora MySQL is reachable: $MYSQL_HOST"
         break
     else
