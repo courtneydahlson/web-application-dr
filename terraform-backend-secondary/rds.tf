@@ -25,11 +25,13 @@ resource "aws_security_group" "rds_sg" {
 
 # Retrieve Credentials from secrets manager
 data "aws_secretsmanager_secret" "rds_creds" {
-  name = "rds/mysql/secondary"
+    provider = aws.primary
+    name = "rds/mysql"
 }
 
 data "aws_secretsmanager_secret_version" "rds_creds" {
-  secret_id = data.aws_secretsmanager_secret.rds_creds.id
+    provider = aws.primary
+    secret_id = data.aws_secretsmanager_secret.rds_creds.id
 }
 
 locals {
