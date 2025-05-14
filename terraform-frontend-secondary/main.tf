@@ -162,7 +162,7 @@ resource "aws_launch_template" "web_server_lt" {
 }
 
 resource "aws_iam_role" "ec2_s3_access" {
-  name = "ec2-s3-access-role-tf"
+  name = "ec2-s3-access-role-secondary-tf"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -177,7 +177,7 @@ resource "aws_iam_role" "ec2_s3_access" {
 }
 
 resource "aws_iam_policy" "ec2_s3_access_policy" {
-  name = "s3-access-policy-tf"
+  name = "s3-access-policy-secondary-tf"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -203,7 +203,7 @@ resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
 }
 
 resource "aws_iam_instance_profile" "ec2_instance_profile" {
-  name = "ec2-s3-instance-profile-tf"
+  name = "ec2-s3-instance-profile-secondary-tf"
   role = aws_iam_role.ec2_s3_access.name
 }
 
