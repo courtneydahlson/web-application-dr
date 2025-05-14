@@ -47,3 +47,7 @@ variable "global_cluster_identifier" {
     description = "Global cluster"
     type = string
 }
+
+variable "certificate_arn" {
+  description = "Certificate for backend"
+}
