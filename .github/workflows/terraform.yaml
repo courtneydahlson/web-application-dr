@@ -145,9 +145,6 @@ jobs:
     # - name: Write URL to config.js
     #   run: sed -i "s|\"dummy url\"|\"http://${{ needs.terraform-backend-deploy.outputs.output1 }}/ordersubmission\"|" config.js
     #   working-directory: ./frontend
-    # - name: Look at config.js file
-    #   run: cat config.js
-    #   working-directory: ./frontend
     - name: List S3 Bucket
       run: aws s3 ls
     - name: Copy config.js to S3 Bucket
