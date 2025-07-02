@@ -4,8 +4,11 @@ import config
 import boto3
 import json
 from botocore.exceptions import ClientError
+from flask_cors import CORS, cross_origin
+
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def get_secret(secret_name, region_name):
     client = boto3.client('secretsmanager', region_name=region_name)
@@ -38,8 +41,16 @@ def get_db_connection():
 def home():
     return "Welcome to the order submission backend"
 
-@app.route('/ordersubmission', methods=['POST'])
+@app.route('/ordersubmission', methods=['POST', 'OPTIONS'])
+#@cross_origin(origin='*', methods=['POST', 'OPTIONS'], allow_headers=['Content-Type'])
 def handle_order():
+    if request.method == "OPTIONS":
+        response = app.make_response("")
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response, 200
+    
     data = request.get_json(silent=True)
 
     if data:

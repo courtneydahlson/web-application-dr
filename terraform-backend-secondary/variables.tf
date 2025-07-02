@@ -1,7 +1,7 @@
 variable "region" {
     description = "AWS Region to deploy resources"
     type = string
-    default = "us-east-1"
+    default = "us-west-2"
 }
 
 variable "vpc_cidr_block" {
@@ -43,9 +43,9 @@ variable "s3_bucket_backend" {
     type = string
 }
 
-variable "key_name" {
-  description = "The name of the EC2 Key Pair"
-  type        = string
+variable "global_cluster_identifier" {
+    description = "Global cluster"
+    type = string
 }
 
 variable "certificate_arn" {

@@ -36,12 +36,19 @@ locals {
   db_creds = jsondecode(data.aws_secretsmanager_secret_version.rds_creds.secret_string)
 }
 
+# Create global cluster 
+resource "aws_rds_global_cluster" "aurora_global_cluster" {
+  global_cluster_identifier = "aurora-global-cluster"
+  engine = "aurora-mysql"
+  engine_version = "8.0.mysql_aurora.3.08.2"
+}
 
 # Create Aurora Cluster (writer endpoint)
 resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier      = "backend-aurora-cluster"
   engine                  = "aurora-mysql"
   engine_version          = "8.0.mysql_aurora.3.08.2" 
+  global_cluster_identifier = aws_rds_global_cluster.aurora_global_cluster.global_cluster_identifier
   database_name           = "webappdb"
   master_username         = local.db_creds.username
   master_password         = local.db_creds.password
@@ -52,19 +59,32 @@ resource "aws_rds_cluster" "aurora_cluster" {
 }
 
 # Create writer instance
-resource "aws_rds_cluster_instance" "writer" {
+# resource "aws_rds_cluster_instance" "writer" {
+#   identifier              = "aurora-writer-instance"
+#   cluster_identifier      = aws_rds_cluster.aurora_cluster.id
+#   instance_class          = "db.r5.large"
+#   engine                  = "aurora-mysql"
+#   publicly_accessible     = false
+# }
+
+# Create instance (The first instance created will be the writer)
+resource "aws_rds_cluster_instance" "writer_instance" {
   identifier              = "aurora-writer-instance"
   cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  instance_class          = "db.t4g.medium"
-  engine                  = "aurora-mysql"
+  instance_class          = "db.r5.large"  
+  engine                  = "aurora-mysql"  
   publicly_accessible     = false
+  db_subnet_group_name    = aws_db_subnet_group.rds_subnets.name
+  tags = {
+    Name = "AuroraWriter"
+  }
 }
 
 # Create reader instance
-resource "aws_rds_cluster_instance" "reader" {
+resource "aws_rds_cluster_instance" "reader_instance" {
   identifier              = "aurora-reader-instance"
   cluster_identifier      = aws_rds_cluster.aurora_cluster.id
-  instance_class          = "db.t4g.medium"  
+  instance_class          = "db.r5.large"  
   engine                  = "aurora-mysql"  
   publicly_accessible     = false
   db_subnet_group_name    = aws_db_subnet_group.rds_subnets.name
@@ -72,4 +92,5 @@ resource "aws_rds_cluster_instance" "reader" {
   tags = {
     Name = "AuroraReader"
   }
+  depends_on = [aws_rds_cluster_instance.writer_instance]
 }

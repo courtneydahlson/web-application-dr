@@ -12,7 +12,7 @@ resource "aws_security_group" "alb_backend_sg" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 
-    ingress {
+   ingress {
         description = "Allow HTTPS traffic from ALB"
         from_port   = 443
         to_port     = 443
@@ -43,7 +43,6 @@ resource "aws_lb" "backend_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_backend_sg.id]
-  #subnets            = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
   subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
 }
 

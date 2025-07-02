@@ -7,3 +7,4 @@ asg_max_size         = 3
 asg_desired_capacity = 2
 s3_bucket_backend = "web-application-dr"
 key_name = "EC2 Tutorial"
+certificate_arn = "arn:aws:acm:us-east-1:783764614133:certificate/85f028e4-0ec9-4400-a4ba-324b9557420a"

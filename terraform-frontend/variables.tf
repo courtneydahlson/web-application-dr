@@ -1,13 +1,6 @@
-variable "region" {
-    description = "AWS Region to deploy resources"
-    type = string
-    default = "us-east-1"
-}
-
-variable "vpc_cidr_block" {
-    description = "VPC cidr block"
-    type = string
-    default = "10.0.0.0/16"
+variable "key_name" {
+  description = "The name of the EC2 Key Pair"
+  type        = string
 }
 
 variable "ami_id" {
@@ -16,8 +9,9 @@ variable "ami_id" {
 }
 
 variable "instance_type" {
-    description = "Instance type for the EC2 instance"
-    type = string
+  description = "Instance type for the EC2 instance"
+  type        = string
+  default     = "t2.micro"
 }
 
 variable "asg_max_size" {
@@ -38,16 +32,11 @@ variable "asg_desired_capacity" {
   default     = 2
 }
 
-variable "s3_bucket_backend" {
+variable "s3_bucket_frontend" {
     description = "S3 bucket name"
     type = string
 }
 
-variable "key_name" {
-  description = "The name of the EC2 Key Pair"
-  type        = string
-}
-
 variable "certificate_arn" {
-  description = "Certificate for backend"
+  default = "arn:aws:acm:us-east-1:783764614133:certificate/8f6d651e-df0f-4419-bc01-3aff5ebb2b9d"
 }

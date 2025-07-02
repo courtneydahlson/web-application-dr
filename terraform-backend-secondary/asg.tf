@@ -17,7 +17,7 @@ resource "aws_autoscaling_group" "backend_asg" {
 
 # IAM role for ec2 
 resource "aws_iam_role" "ec2_iam_role" {
-  name = "ec2-role-tf"
+  name = "ec2-role-secondary-tf"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -33,7 +33,7 @@ resource "aws_iam_role" "ec2_iam_role" {
 
 # S3 Policy
 resource "aws_iam_policy" "s3_access_policy" {
-  name = "ec2-s3-access-policy-tf"
+  name = "ec2-s3-access-policy-secondary-tf"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -62,7 +62,7 @@ resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
 
 #Instance profile to attach IAM role to EC2 instance
 resource "aws_iam_instance_profile" "ec2_instance_profile_backend" {
-  name = "ec2-s3-instance-profile-backend-tf"
+  name = "ec2-s3-instance-profile-backend-secondary-tf"
   role = aws_iam_role.ec2_iam_role.name
 }
 
@@ -71,7 +71,7 @@ data "aws_caller_identity" "current" {}
 
 # RDS Policy
 resource "aws_iam_policy" "secrets_policy" {
-  name = "SecretsAccessPolicy"
+  name = "SecretsAccessPolicy-secondary-tf"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -101,7 +101,7 @@ resource "aws_launch_template" "backend" {
   name_prefix   = "backend-lt-"
   image_id      = var.ami_id
   instance_type = var.instance_type
-  key_name      = "EC2 Tutorial"
+  key_name      = "EC2 Tutorial US west 2"
 
   tag_specifications {
     resource_type = "instance"
